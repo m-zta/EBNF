@@ -15,40 +15,60 @@
 // Sauce = 'K' | 'M' | 'T'
 // Bun = 'B'
 
+// Sauce = 'K' | 'M' | 'T'
 bool is_sauce(std::istream& is) {
     return consume(is, 'K')
         || consume(is, 'M')
         || consume(is, 'T');
 }
 
+// Cheese = 'C'
 bool is_cheese(std::istream& is) {
     return consume(is, 'C');
 }
 
-bool is_patty(std::istream& is) {
-    return consume(is, 'X') || consume(is, 'Y');
-}
-
 bool is_pc(std::istream& is) {
-    return (is_patty(is) && is_cheese(is)
-            && lookahead(is) != 'X' && lookahead(is) != 'Y')
-        || is_pc(is);
+    if (!(consume(is, 'X') || consume(is, 'Y')) && !is_cheese(is)) {
+        return false;
+    }
+    
+    while (consume(is, 'X') || consume(is, 'Y') || is_cheese(is));
+
+    return true;
 }
 
+// Onions = 'O' 'O' 'O'
 bool is_onions(std::istream& is) {
-    return consume(is, 'O') && consume(is, 'O') && consume(is, 'O');
+    do {
+        for (unsigned int i {0}; i < 2; ++i) {
+            if (!consume(is, 'O')) {
+                return false;
+            }
+        }
+    } while (lookahead(is) == 'O');
+    return true;
 }
 
+// Burger = Bun Salad {Onions}
+//          '(' Patty Cheese {Patty | Cheese} ')'
+//          Sauce Bun
 bool is_burger(std::istream& is) {
     char c {' '};
-    return consume(is, 'B')
-        && consume(is, 'S')
-        && is_onions(is)
-        && consume(is, '(')
+
+    if (!(consume(is, 'B') && consume(is, 'S'))) {
+        return false;
+    }
+
+    if (lookahead(is) == 'O' && !is_onions(is)) {
+        return false;
+    }
+
+    return consume(is, '(')
         && is_pc(is)
         && (is >> c) && (c == ')')
         && is_sauce(is)
         && consume(is, 'B');
+
 }
 
 int main() {
@@ -69,7 +89,7 @@ int main() {
         "BSOOO(XCYCCXC)KB", // valid
         "BSOOOOOO(XCYXY)MB", // valid
         "BSOOO(YC)MB", // valid
-        "BSOO(XCYXC)TB", // valid
+        "BSOOO(XCYXC)TB", // valid
         "BSOOOOOOOOO(YCXXCCX)KB", // valid
         "BSOO(XCKB ", // invalid
         "BSOO(XC)MB", // invalid
@@ -84,8 +104,9 @@ int main() {
 
     std::cout << "\nAUTOTEST RUN:\n";
     unsigned int failed {0};
+    unsigned long len {testcon.size()};
 
-    for (unsigned int i {0}; i < testcon.size(); ++i) {
+    for (unsigned int i {0}; i < len; ++i) {
         std::string str {testcon.at(i)};
         std::istringstream is {str};
         bool val {i < 6};
@@ -94,11 +115,17 @@ int main() {
         std::cout << '\n' << i + 1 << ". input: " << str << std::endl;
         std::cout << "expected output: " << (val ? "valid" : "invalid") << std::endl;
         std::cout << "actual output: " << (res ? "valid" : "invalid") << std::endl;
-        std::cout << ((i < 6 == res) ? "PASSED" : "--NOT PASSED") << std::endl;
+        if (i < 6 == res) {
+            std::cout << "PASSED" << std::endl;
+        } else {
+            std::cout << "--NOT PASSED" << std::endl;
+            ++failed;
+        }
     }
 
-    // FIXME: Solve the problem of type conversion from unsigned long to double...
-    // double rate {(testcon.size() - failed) / testcon.size() * 100};
-    //     std::cout << "\ntotal result: " << rate << "%\n";
+    // print the percentage of correct outputs
+    unsigned long rate {(len - failed) * 100 / len};
+        std::cout << "\ntotal result: " << rate << "%\n";
+        std::cout << "------------------\n\n";
 }
 
