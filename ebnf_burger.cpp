@@ -28,7 +28,7 @@ bool is_cheese(std::istream& is) {
 }
 
 bool is_pc(std::istream& is) {
-    if (!(consume(is, 'X') || consume(is, 'Y')) && !is_cheese(is)) {
+    if (!((consume(is, 'X') || consume(is, 'Y')) && is_cheese(is))) {
         return false;
     }
     
@@ -39,14 +39,9 @@ bool is_pc(std::istream& is) {
 
 // Onions = 'O' 'O' 'O'
 bool is_onions(std::istream& is) {
-    do {
-        for (unsigned int i {0}; i < 2; ++i) {
-            if (!consume(is, 'O')) {
-                return false;
-            }
-        }
-    } while (lookahead(is) == 'O');
-    return true;
+    unsigned int i {0};
+    for (;consume(is, 'O'); ++i);
+    return !(i % 3);
 }
 
 // Burger = Bun Salad {Onions}
@@ -85,21 +80,21 @@ int main() {
     // this is auto-test mode
     
     std::vector<std::string> testcon {
-        "BSOOO(XC)KB", // valid
+        "BSOOO(XC)KB", // valid 1
         "BSOOO(XCYCCXC)KB", // valid
         "BSOOOOOO(XCYXY)MB", // valid
         "BSOOO(YC)MB", // valid
         "BSOOO(XCYXC)TB", // valid
-        "BSOOOOOOOOO(YCXXCCX)KB", // valid
-        "BSOO(XCKB ", // invalid
+        "BSOOOOOOOOO(YCXXCCX)KB", // valid 6
+        "BSOO(XCKB ", // invalid 1
         "BSOO(XC)MB", // invalid
         "BSOOO(YXC)KB", // invalid
-        //"BSOOO(CYCC)MB", // invalid, this one causes a segmentation fault...
+        "BSOOO(CYCC)MB", // invalid, this one causes a segmentation fault...
         "BOOOOOOOO(XC)MB", // invalid
         "BOOO(XCXXXCC)TKB", // invalid
         "BOOOYCYYY)KB", // invalid
         "BBOOO(XC)TB", // invalid
-        "BOOO(XCCCCY)KBBB" // invalid
+        "BOOO(XCCCCY)KBBB" // invalid 9
     };
 
     std::cout << "\nAUTOTEST RUN:\n";
@@ -125,7 +120,9 @@ int main() {
 
     // print the percentage of correct outputs
     unsigned long rate {(len - failed) * 100 / len};
-        std::cout << "\ntotal result: " << rate << "%\n";
-        std::cout << "------------------\n\n";
+    std::cout << "\nTOTAL RESULT:";
+    std::cout << "\ntests passed: " << len - failed << '/' << len;
+    std::cout << "\npercentage: " << rate << "%\n";
+    std::cout << "-------------------\n\n";
 }
 
