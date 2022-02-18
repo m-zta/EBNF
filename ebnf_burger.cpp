@@ -66,19 +66,21 @@ bool is_burger(std::istream& is) {
 
 }
 
-int main() {
-    /* 
+// manual test mode [1]
+void manual_test(std::istream& is) {
     //this is manual test mode
+    std::cout << "Enter string to check:\n";
+
     if(is_burger(std::cin)) {
         std::cout << "valid\n";
     } else {
         std::cout << "invalid\n";
     }
-    return 0;
-    */
+}
 
-    // this is auto-test mode
-    
+// auto test mode [2]
+void auto_test(std::istream& is) {
+    // initialize a testcontainer with examples
     std::vector<std::string> testcon {
         "BSOOO(XC)KB", // valid 1
         "BSOOO(XCYCCXC)KB", // valid
@@ -89,7 +91,7 @@ int main() {
         "BSOO(XCKB ", // invalid 1
         "BSOO(XC)MB", // invalid
         "BSOOO(YXC)KB", // invalid
-        "BSOOO(CYCC)MB", // invalid, this one causes a segmentation fault...
+        "BSOOO(CYCC)MB", // invalid
         "BOOOOOOOO(XC)MB", // invalid
         "BOOO(XCXXXCC)TKB", // invalid
         "BOOOYCYYY)KB", // invalid
@@ -97,6 +99,7 @@ int main() {
         "BOOO(XCCCCY)KBBB" // invalid 9
     };
 
+    // run auto test
     std::cout << "\nAUTOTEST RUN:\n";
     unsigned int failed {0};
     unsigned long len {testcon.size()};
@@ -124,5 +127,22 @@ int main() {
     std::cout << "\ntests passed: " << len - failed << '/' << len;
     std::cout << "\npercentage: " << rate << "%\n";
     std::cout << "-------------------\n\n";
+}
+
+int main() {
+    std::cout << "Choose mode:\n";
+    std::cout << "[1] - manual test" << std::endl;
+    std::cout << "[2] - auto test" << std::endl;
+    std::cout << "chosen mode: ";
+    unsigned int mode {0};
+    std::cin >> mode;
+
+    if (mode == 1) {
+        manual_test(std::cin);
+    } else if (mode == 2) {
+        auto_test(std::cin);
+    }
+
+    return 0;
 }
 
