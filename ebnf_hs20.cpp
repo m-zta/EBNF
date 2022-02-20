@@ -24,32 +24,32 @@
 //   Ground = 'G'.
 
 // Ground = 'G'.
-bool Ground(std::istream& is){
+bool Ground(std::istream& is) {
     return consume(is, 'G');
 }
 
 // Pea = 'P'.
-bool Pea(std::istream& is){
+bool Pea(std::istream& is) {
     return consume(is, 'P');
 }
 
 // Frog = 'F'.
-bool Frog(std::istream& is){
+bool Frog(std::istream& is) {
     return consume(is, 'F');
 }
 
 // Mattress = 'M'.
-bool Mattress(std::istream& is){
+bool Mattress(std::istream& is) {
     return consume(is, 'M');
 }
 
 // On = '/'.
-bool On(std::istream& is){
+bool On(std::istream& is) {
     return consume(is, '/');
 }
 
 // Princess = 'X'.
-bool Princess(std::istream& is){
+bool Princess(std::istream& is) {
     return consume(is, 'X');
 }
 
@@ -63,7 +63,7 @@ bool Frogs(std::istream& is) {
 }
 
 // Stack = Mattress ( Frogs | Stack ) Mattress.
-bool Stack(std::istream& is){
+bool Stack(std::istream& is) {
     if (!Mattress(is)) return false;
     if (lookahead(is) == 'F') {
         if (!Frogs(is)) return false;
@@ -77,7 +77,7 @@ bool Stack(std::istream& is){
 }
 
 // Peas = Pea { Pea } On Ground.
-bool Peas(std::istream& is){
+bool Peas(std::istream& is) {
     if (!Pea(is)) return false;
     while (lookahead(is) == 'P') {
         if (!Pea(is)) return false;
@@ -87,8 +87,8 @@ bool Peas(std::istream& is){
 }
 
 // Night = Princess On Pile On Peas.
-bool Night(std::istream& is){
-  return Princess(is) & On(is) & Stack(is) & On(is) & Peas(is);
+bool Night(std::istream& is) {
+    return Princess(is) & On(is) & Stack(is) & On(is) & Peas(is);
 }
 
 int main() {

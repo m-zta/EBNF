@@ -12,7 +12,7 @@
 
 bool digit(std::istream& is) {
     char ch {lookahead(is)};
-    if('0' <= ch && ch <= '9') {
+    if ('0' <= ch && ch <= '9') {
         return consume(is, ch);
     } else {
         return false;
@@ -20,9 +20,10 @@ bool digit(std::istream& is) {
 }
 
 bool number(std::istream& is) {
-    for(unsigned int i {0}; i < 4; ++i) {
+    for (unsigned int i {0}; i < 4; ++i) {
         if(!digit(is)) return false;
     }
+
     return true;
 }
 
@@ -39,6 +40,7 @@ bool find(const char& c) {
         case 'Z': return true;
         default: return false;
     }
+
     return false;
 }
 
@@ -47,6 +49,7 @@ bool B(std::istream& is) {
     while(find(lookahead(is))) {
         if(!G(is)) return false;
     }
+    
     return true;
 }
 
